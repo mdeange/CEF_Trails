@@ -111,6 +111,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
+        //KmlLayer kmlLayer =
+
         if (routeNum == -1) { // In recording mode
             if (!isLocationEnabled()) showAlert();
         } else { // Showing a specific recorded route
