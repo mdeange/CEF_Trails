@@ -17,7 +17,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -40,8 +39,8 @@ import java.util.List;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int ZOOMLEVEL = 19;
     private static final int MSPERSEC = 1000;
-    private static final int MINUPDATETIME = 10;
-    private static final int MINUPDATEDISTANCE = 10;
+    private static final int MINUPDATETIME = 5;
+    private static final int MINUPDATEDISTANCE = 5;
 
     public static int routeNum = -1;
 
@@ -53,7 +52,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         public void onLocationChanged(Location location) {
             lng = location.getLongitude();
             lat = location.getLatitude();
-            Toast.makeText(MapsActivity.this, "GPS: " + lat + ", " + lng, Toast.LENGTH_SHORT).show();
             LatLng myPos = new LatLng(lat, lng);
             RouteData.getInstance().addCoords(myPos);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, ZOOMLEVEL));
@@ -247,7 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 coords.add(new LatLng(Double.parseDouble(lineList.get(0)), Double.parseDouble(lineList.get(1))));
             }
 
-            System.out.println("Number of coordinatess: " + coords.size());
+            System.out.println("Number of coordinates: " + coords.size());
 
             inputStream.close();
         } catch (Exception e) {
@@ -264,6 +262,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         line.addAll(coords);
 
         mMap.addPolyline(line);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ZOOMLEVEL));
+        if (coords.size() > 0) mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ZOOMLEVEL));
     }
 }
