@@ -50,7 +50,6 @@ public class MainMap extends FragmentActivity implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap map) {
-
     }
 
     class LocationUpdateListener implements LocationListener {

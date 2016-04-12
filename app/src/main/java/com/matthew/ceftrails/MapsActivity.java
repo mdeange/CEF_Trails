@@ -28,10 +28,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.kml.KmlLayer;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,6 +131,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ((Button) findViewById(R.id.recordButton)).setVisibility(View.INVISIBLE);
 
             drawMapWithRoute();
+        }
+
+        try {
+            KmlLayer layer = new KmlLayer(googleMap, R.raw.trails, getApplicationContext());
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
