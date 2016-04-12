@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.BufferedReader;
@@ -109,7 +110,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
-        //KmlLayer kmlLayer =
+        ArrayList<POI> pois = new ArrayList<>();
+        pois.add(new POI("Fishing Dock", 34.7404805, -82.8637305));
+        pois.add(new POI("Wildcat Creek Waterfall", 34.75857517, -82.85173118));
+        pois.add(new POI("Six Mile Creek Waterfall", 34.77261507, -82.85108084));
+        pois.add(new POI("Waterfall", 34.7210725, -82.8357294));
+        pois.add(new POI("Wildcat Shelter", 34.75597394, -82.85628649));
+
+        for(POI p : pois) {
+            mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
+        }
 
         if (routeNum == -1) { // In recording mode
             if (!isLocationEnabled()) showAlert();
