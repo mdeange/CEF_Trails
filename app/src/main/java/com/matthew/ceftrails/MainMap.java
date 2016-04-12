@@ -13,8 +13,6 @@ import android.support.v4.app.FragmentActivity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
-//added by Stephen
-//another change
 
 public class MainMap extends FragmentActivity {
     public LocationManager locationManager;
