@@ -134,8 +134,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         try {
-            KmlLayer layer = new KmlLayer(mMap, R.raw.trails, getApplicationContext());
+            KmlLayer layer = new KmlLayer(mMap, R.raw.doc, getApplicationContext());
             layer.addLayerToMap();
+            KmlLayer layer1 = new KmlLayer(mMap, R.raw.docnorth, getApplication());
+            layer1.addLayerToMap();
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         } catch (IOException e) {
