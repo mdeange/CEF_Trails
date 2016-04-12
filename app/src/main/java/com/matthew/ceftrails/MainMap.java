@@ -11,9 +11,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
-public class MainMap extends FragmentActivity {
+public class MainMap extends FragmentActivity implements OnMapReadyCallback {
     public LocationManager locationManager;
     public LocationUpdateListener listener;
     private GoogleMap map;
@@ -23,9 +24,9 @@ public class MainMap extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // Get a handle to the Map Fragment
-        map = ((SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map)).getMap();
+        // Obtain the MapFragment and get notified when the map is ready to be used.
+        MapFragment mapFrag = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        mapFrag.getMapAsync(this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -41,14 +42,17 @@ public class MainMap extends FragmentActivity {
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (map == null) {
-            map = ((SupportMapFragment) getSupportFragmentManager().
-                    findFragmentById(R.id.map)).getMap();
-            // Check if we were successful in obtaining the map.
-            if (map != null) {
-                // The Map is verified. It is now safe to manipulate the map.
-            }
+            // Obtain the MapFragment and get notified when the map is ready to be used.
+            MapFragment mapFrag = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+            mapFrag.getMapAsync(this);
         }
     }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+
+    }
+
     class LocationUpdateListener implements LocationListener {
 
         @Override
