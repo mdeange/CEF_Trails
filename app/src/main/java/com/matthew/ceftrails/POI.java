@@ -7,6 +7,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class POI {
     private String name;
+    private String description;
     private LatLng coord;
 
     public POI(String n, double lat, double lng) {
@@ -20,5 +21,9 @@ public class POI {
 
     public LatLng getCoord() {
         return coord;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
