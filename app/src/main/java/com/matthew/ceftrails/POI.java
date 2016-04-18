@@ -7,26 +7,17 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class POI {
     private String name;
-    private String description;
-    private String filename;
-    private String path;
+    //private String description;
+    //private String filename;
+    //private String path;
     private LatLng coord;
 
-    public POI(String n, String d, String f, String p, double lat, double lng) {
+    public POI(String n, double lat, double lng) {
         name = n;
-        description = d;
-        filename = f;
-        path = p;
+        //description = d;
+        //filename = f;
+        //path = p;
         coord = new LatLng(lat, lng);
-    }
-
-    public POI(String breakSeparated) {
-        String params[] = breakSeparated.split("<BREAK>");
-        name = params[0];
-        description = params[1];
-        filename = params[2];
-        path = params[3];
-        coord = new LatLng(Double.parseDouble(params[5]), Double.parseDouble(params[4]));
     }
 
     public String getName() {
@@ -37,7 +28,7 @@ public class POI {
         return coord;
     }
 
-    public String getDescription() {
+    /*public String getDescription() {
         return description;
     }
 
@@ -47,5 +38,5 @@ public class POI {
 
     public String getPath() {
         return path;
-    }
+    }*/
 }

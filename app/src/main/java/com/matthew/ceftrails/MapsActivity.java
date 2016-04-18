@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -114,7 +115,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
-        ArrayList<POI> pois = ExternalDBGet.getPOIs();
+        ArrayList<POI> pois = Singleton.getInstance().getPois();
 
         for(POI p : pois) {
             mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
