@@ -52,7 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int MINUPDATETIME = 5;
     private static final int MINUPDATEDISTANCE = 5;
 
-    public static int routeNum;
+    public static int routeNum = -1;
 
     private GoogleMap mMap;
     private LocationManager lm;
@@ -107,7 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         recordButton = (Button) findViewById(R.id.recordButton);
         routesButton = (Button) findViewById(R.id.routesButton);
 
-        routeNum = -1;
+        //routeNum = -1;
     }
 
     /**
@@ -129,9 +129,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
+        System.out.println("RouteNum = " + routeNum);
+
+        drawMap();
         if (routeNum == -1) { // In general view
             if (!isLocationEnabled()) showAlert();
-            drawMap();
         } else { // Showing a specific recorded route
             ((Button) findViewById(R.id.recordButton)).setVisibility(View.INVISIBLE);
 
@@ -145,8 +147,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void drawMap() {
         pois = Singleton.getInstance().getPois();
-
-        System.out.println("Number of POIs: " + pois.size());
 
         for(POI p : pois) {
             mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
@@ -173,6 +173,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void drawRouteOnMap() {
         ArrayList<LatLng> coords = readCsv();
+        System.out.println("Coords Size: " + coords.size());
 
         PolylineOptions line = new PolylineOptions().width(10).color(Color.RED);
         line.addAll(coords);
