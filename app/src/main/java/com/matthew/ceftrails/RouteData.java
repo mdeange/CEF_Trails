@@ -40,6 +40,7 @@ public class RouteData {
 
         // Set up the input
         final EditText input = new EditText(context);
+        input.setHint("Enter Route Name");
         builder.setView(input);
 
         // Set up the buttons
