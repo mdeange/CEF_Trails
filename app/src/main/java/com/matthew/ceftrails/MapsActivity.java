@@ -20,6 +20,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -58,6 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager lm;
     private double lat, lng;
     private ArrayList<POI> pois;
+    private ArrayList<LatLng> currentPath;
 
     private static Button recordButton;
     private static Button routesButton;
@@ -68,7 +70,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             lat = location.getLatitude();
             LatLng myPos = new LatLng(lat, lng);
             RouteData.getInstance().addCoords(myPos);
+            Toast.makeText(getApplicationContext(), "Lat: " + lat + " Lng: " + lng, Toast.LENGTH_LONG).show();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, ROUTEZOOM));
+
+            currentPath.add(myPos);
+            PolylineOptions line = new PolylineOptions().width(10).color(Color.RED);
+            line.addAll(currentPath);
+
+            mMap.addPolyline(line);
         }
 
         @Override
@@ -103,6 +112,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        currentPath = new ArrayList<LatLng>();
 
         recordButton = (Button) findViewById(R.id.recordButton);
         routesButton = (Button) findViewById(R.id.routesButton);
@@ -190,20 +201,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void showAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Enable Location")
-                .setMessage("Your GPS Locations Settings is set to 'Off'.\nPlease Enable Location to " +
-                        "use this app")
-                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        startActivity(myIntent);
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    }
-                });
+            .setMessage("Your GPS Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                    "use this app")
+            .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(myIntent);
+                }
+            })
+            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                }
+            });
         dialog.show();
     }
 
@@ -274,6 +285,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void stopRecording() {
+        currentPath.clear();
         routesButton.setVisibility(View.VISIBLE);
         RouteData.getInstance().stopRecording(this);
         stopUpdates();

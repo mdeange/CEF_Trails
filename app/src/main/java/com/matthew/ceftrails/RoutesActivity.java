@@ -55,6 +55,7 @@ public class RoutesActivity extends AppCompatActivity {
                         .setNegativeButton("Delete route", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 InternalDB.getInstance(context).removeRoute(MapsActivity.routeNum);
+                                refreshTable();
                                 MapsActivity.routeNum = -1;
                             }
                         })
