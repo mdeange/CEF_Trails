@@ -89,6 +89,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        externalDB = new ExternalDB(this);
+        externalDB.execute("poi");
+
         // get the LocationManager
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -102,9 +105,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         recordButton = (Button) findViewById(R.id.recordButton);
         routesButton = (Button) findViewById(R.id.routesButton);
-
-        externalDB = new ExternalDB(this);
-        externalDB.execute("poi");
 
         routeNum = -1;
     }
