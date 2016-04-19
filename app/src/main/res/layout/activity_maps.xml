@@ -35,4 +35,14 @@ tools:context="com.matthew.ceftrails.MapsActivity">
         android:layout_alignTop="@+id/map"
         android:layout_alignRight="@+id/recordButton"
         android:layout_alignEnd="@+id/recordButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CAMERA"
+        android:id="@+id/cameraButton"
+        android:layout_alignParentBottom="true"
+        android:layout_toRightOf="@+id/routesButton"
+        android:layout_toEndOf="@+id/routesButton"
+        android:onClick="goToCamera" />
 </RelativeLayout>

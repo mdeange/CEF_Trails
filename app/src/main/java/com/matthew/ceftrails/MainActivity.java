@@ -1,4 +1,4 @@
-package com.matthew.ceftrails;
+/*package com.matthew.ceftrails;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,13 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.view.View;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayOutputStream;*/
 
 /**
  * This is the main activity.
  */
 
-public class MainActivity extends AppCompatActivity {
+/*public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,4 +55,4 @@ public class MainActivity extends AppCompatActivity {
         }
         return encodedImageData;
     }
-}
+}*/
