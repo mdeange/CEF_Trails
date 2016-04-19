@@ -42,7 +42,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private static final int ZOOMLEVEL = 19;
+    private static final int ROUTEZOOM = 19;
+    private static final int MAPZOOM = 13;
     private static final int MSPERSEC = 1000;
     private static final int MINUPDATETIME = 5;
     private static final int MINUPDATEDISTANCE = 5;
@@ -65,7 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             lat = location.getLatitude();
             LatLng myPos = new LatLng(lat, lng);
             RouteData.getInstance().addCoords(myPos);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, ZOOMLEVEL));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, ROUTEZOOM));
         }
 
         @Override
@@ -154,6 +155,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             KmlLayer southLayer = new KmlLayer(mMap, R.raw.south, getApplicationContext());
             southLayer.addLayerToMap();
+
             KmlLayer northLayer = new KmlLayer(mMap, R.raw.north, getApplication());
             northLayer.addLayerToMap();
         } catch (XmlPullParserException e) {
@@ -161,6 +163,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // move to Clemson's campus
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(34.6834, -82.8374), MAPZOOM));
     }
 
     /**
@@ -173,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         line.addAll(coords);
 
         mMap.addPolyline(line);
-        if (coords.size() > 0) mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ZOOMLEVEL));
+        if (coords.size() > 0) mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ROUTEZOOM));
     }
 
     /* Code taken from http://www.androidauthority.com/get-use-location-data-android-app-625012/
