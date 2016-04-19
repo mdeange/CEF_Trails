@@ -20,7 +20,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -31,6 +30,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.kml.KmlLayer;
 
@@ -59,7 +59,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager lm;
     private double lat, lng;
     private ArrayList<POI> pois;
-    private ArrayList<LatLng> currentPath;
+    private PolylineOptions polyOptions;
+    private Polyline polyline;
 
     private static Button recordButton;
     private static Button routesButton;
@@ -70,14 +71,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             lat = location.getLatitude();
             LatLng myPos = new LatLng(lat, lng);
             RouteData.getInstance().addCoords(myPos);
-            Toast.makeText(getApplicationContext(), "Lat: " + lat + " Lng: " + lng, Toast.LENGTH_LONG).show();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPos, ROUTEZOOM));
 
-            currentPath.add(myPos);
-            PolylineOptions line = new PolylineOptions().width(10).color(Color.RED);
-            line.addAll(currentPath);
+            polyOptions.add(myPos);
 
-            mMap.addPolyline(line);
+            polyline = mMap.addPolyline(polyOptions);
         }
 
         @Override
@@ -112,8 +110,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        currentPath = new ArrayList<LatLng>();
 
         recordButton = (Button) findViewById(R.id.recordButton);
         routesButton = (Button) findViewById(R.id.routesButton);
@@ -280,26 +276,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void startRecording() {
+        polyOptions = new PolylineOptions().width(10).color(Color.RED);
         routesButton.setVisibility(View.INVISIBLE);
         RouteData.getInstance().startRecording();
         startUpdates();
+        recordButton.setText("STOP RECORDING");
     }
 
     public void stopRecording() {
-        currentPath.clear();
+        polyline.remove();
         routesButton.setVisibility(View.VISIBLE);
         RouteData.getInstance().stopRecording(this);
         stopUpdates();
+
+        recordButton.setText("RECORD NEW ROUTE");
     }
 
     public void buttonPress(View view) {
         if (recordButton.getText() == "STOP RECORDING") {
             stopRecording();
-            recordButton.setText("RECORD NEW ROUTE");
         }
         else {
             startRecording();
-            recordButton.setText("STOP RECORDING");
         }
     }
 
