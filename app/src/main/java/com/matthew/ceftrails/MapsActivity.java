@@ -140,8 +140,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
-        System.out.println("RouteNum = " + routeNum);
-
         drawMap();
         if (routeNum == -1) { // In general view
             if (!isLocationEnabled()) showAlert();
@@ -184,7 +182,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     public void drawRouteOnMap() {
         ArrayList<LatLng> coords = readCsv();
-        System.out.println("Coords Size: " + coords.size());
 
         PolylineOptions line = new PolylineOptions().width(10).color(Color.RED);
         line.addAll(coords);
