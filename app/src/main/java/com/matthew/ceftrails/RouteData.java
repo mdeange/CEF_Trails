@@ -14,7 +14,6 @@ public class RouteData {
     private static RouteData instance;
     private static ArrayList<Coordinate> coords;
     private static int routeNum = 0;
-    private static String routeName;
 
     private RouteData() {
         coords = new ArrayList<Coordinate>();
@@ -34,6 +33,7 @@ public class RouteData {
     }
 
     public void stopRecording(Context context) {
+        final Context cont = context;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Route finished!");
@@ -46,7 +46,28 @@ public class RouteData {
         builder.setPositiveButton("Save route", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                RouteData.routeName = input.getText().toString() + ".csv";
+                String routeName = input.getText().toString();
+                String filename = "route" + routeNum + ".csv";
+
+                String str = "LATITUDE, LONGITUDE, DATETIME";
+
+                for (int i = 0; i < coords.size(); i++) {
+                    str = str.concat(coords.get(i).latLng.latitude + ", " + coords.get(i).latLng.longitude + ", " + coords.get(i).time + "\n");
+                }
+
+                FileOutputStream outputStream;
+
+                try {
+                    outputStream = cont.openFileOutput(filename, Context.MODE_PRIVATE);
+                    outputStream.write(str.getBytes());
+                    outputStream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                InternalDB.getInstance(cont).addRoute(routeNum, routeName);
+
+                routeNum++;
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -57,25 +78,5 @@ public class RouteData {
         });
 
         builder.create().show();
-
-        String str = "LATITUDE, LONGITUDE, DATETIME";
-
-        for (int i=0; i<coords.size(); i++) {
-            str = str.concat(coords.get(i).latLng.latitude + ", " + coords.get(i).latLng.longitude + ", " + coords.get(i).time + "\n");
-        }
-
-        FileOutputStream outputStream;
-
-        try {
-            outputStream = context.openFileOutput(routeName, Context.MODE_PRIVATE);
-            outputStream.write(str.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        InternalDB.getInstance(context).addRoute(routeNum, routeName);
-
-        routeNum++;
     }
 }

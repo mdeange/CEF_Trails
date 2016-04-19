@@ -1,5 +1,6 @@
 package com.matthew.ceftrails;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,31 +37,29 @@ public class RoutesActivity extends AppCompatActivity {
         super.onResume();
         refreshTable();
 
+        final Context context = this;
+
         // set listener for clicking on a route
         listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                MapsActivity.routeNum = InternalDB.getInstance(getApplicationContext()).getRouteNum(pos);
+                MapsActivity.routeNum = InternalDB.getInstance(context).getRouteNum(pos);
 
-                new AlertDialog.Builder(getApplicationContext())
-                    .setTitle("View route")
-                    .setPositiveButton("View route", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            startActivity(new Intent(RoutesActivity.this, MapsActivity.class));
-                        }
-                    })
-                    .setNegativeButton("Edit route name", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // EDIT ROUTE NAME
-                        }
-                    })
-                    .setNeutralButton("Delete route", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+                new AlertDialog.Builder(context)
+                        .setTitle("View route")
+                        .setPositiveButton("View route", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(RoutesActivity.this, MapsActivity.class));
+                            }
+                        })
+                        .setNegativeButton("Delete route", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                InternalDB.getInstance(context).removeRoute(MapsActivity.routeNum);
+                                MapsActivity.routeNum = -1;
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .create().show();
             }
         });
     }

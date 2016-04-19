@@ -34,6 +34,7 @@ public class InternalDB {
      * Adds a route to the database
      */
     public void addRoute (int r_id, String name) {
+        System.out.println("Adding route: " + r_id + " with name: " + name);
         try {
             Cursor c;
 
@@ -80,5 +81,11 @@ public class InternalDB {
         for (int i=0; i<pos; i++) c.moveToNext();
 
         return c.getInt(c.getColumnIndex("r_id"));
+    }
+
+    public void removeRoute(int routeNum) {
+        myDatabase = context.openOrCreateDatabase("Routes", context.MODE_PRIVATE, null);
+        String execStr = "DELETE FROM Routes WHERE r_id=" + routeNum;
+        myDatabase.execSQL(execStr);
     }
 }
