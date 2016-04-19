@@ -5,16 +5,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 
@@ -33,6 +36,7 @@ import com.google.maps.android.kml.KmlLayer;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -314,5 +318,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void goToRoutes(View view) {
         startActivity(new Intent(this, RoutesActivity.class));
+    }
+
+    public void goToCamera(View view) {
+        startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Bitmap bp = (Bitmap)data.getExtras().get("data");
+        ExternalDB externalDB = new ExternalDB(this);
+        externalDB.execute("upload_image", getBase64String(bp));
+    }
+
+    public static String getBase64String(Bitmap bp) {
+        String encodedImageData = "";
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] b = baos.toByteArray();
+            encodedImageData = Base64.encodeToString(b, Base64.DEFAULT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encodedImageData;
     }
 }
