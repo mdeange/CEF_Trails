@@ -1,6 +1,9 @@
 package com.matthew.ceftrails;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -11,6 +14,7 @@ public class RouteData {
     private static RouteData instance;
     private static ArrayList<Coordinate> coords;
     private static int routeNum = 0;
+    private static String routeName;
 
     private RouteData() {
         coords = new ArrayList<Coordinate>();
@@ -31,7 +35,28 @@ public class RouteData {
 
     public void stopRecording(Context context) {
 
-        String filename = "route" + routeNum + ".csv";
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Route finished!");
+
+        // Set up the input
+        final EditText input = new EditText(context);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("Save route", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RouteData.routeName = input.getText().toString() + ".csv";
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+
+        builder.create().show();
 
         String str = "LATITUDE, LONGITUDE, DATETIME";
 
@@ -42,14 +67,14 @@ public class RouteData {
         FileOutputStream outputStream;
 
         try {
-            outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+            outputStream = context.openFileOutput(routeName, Context.MODE_PRIVATE);
             outputStream.write(str.getBytes());
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        DBManager.getInstance(context).addRoute(routeNum);
+        InternalDB.getInstance(context).addRoute(routeNum, routeName);
 
         routeNum++;
     }

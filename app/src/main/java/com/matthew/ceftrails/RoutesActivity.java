@@ -1,7 +1,9 @@
 package com.matthew.ceftrails;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 
 public class RoutesActivity extends AppCompatActivity {
     private ListView listView;
-    private DBManager db;
+    private InternalDB db;
     private ArrayList<String> namesList = new ArrayList<String>();
     private ArrayAdapter<String> tableArrayAdapter;
 
@@ -22,7 +24,7 @@ public class RoutesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_routes);
 
         listView = (ListView) findViewById(R.id.routesListView);
-        db = DBManager.getInstance(getApplicationContext());
+        db = InternalDB.getInstance(getApplicationContext());
 
         tableArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, namesList);
         listView.setAdapter(tableArrayAdapter);
@@ -38,8 +40,27 @@ public class RoutesActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                MapsActivity.routeNum = DBManager.getInstance(getApplicationContext()).getRouteNum(pos);
-                startActivity(new Intent(RoutesActivity.this, MapsActivity.class));
+                MapsActivity.routeNum = InternalDB.getInstance(getApplicationContext()).getRouteNum(pos);
+
+                new AlertDialog.Builder(getApplicationContext())
+                    .setTitle("View route")
+                    .setPositiveButton("View route", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            startActivity(new Intent(RoutesActivity.this, MapsActivity.class));
+                        }
+                    })
+                    .setNegativeButton("Edit route name", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // EDIT ROUTE NAME
+                        }
+                    })
+                    .setNeutralButton("Delete route", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
             }
         });
     }
@@ -48,10 +69,9 @@ public class RoutesActivity extends AppCompatActivity {
      * Refreshes the table of routes on the main page to contain the full list of all stored routes.
      */
     private void refreshTable() {
-        int[] routes = db.getRoutes();
+        String[] routes = db.getRoutes();
         namesList.clear();
-        System.out.println(routes.length + " routes");
-        for (int i=0; i<routes.length; i++) namesList.add(new String("route" + i));
+        for (int i=0; i<routes.length; i++) namesList.add(new String(routes[i]));
 
         tableArrayAdapter.notifyDataSetChanged();
     }
