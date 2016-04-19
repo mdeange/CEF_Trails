@@ -20,9 +20,19 @@ tools:context="com.matthew.ceftrails.MapsActivity">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="START RECORDING"
+        android:text="RECORD NEW ROUTE"
         android:id="@+id/recordButton"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:onClick="buttonPress" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MY SAVED ROUTES"
+        android:id="@+id/routesButton"
+        android:onClick="goToRoutes"
+        android:layout_alignTop="@+id/map"
+        android:layout_alignRight="@+id/recordButton"
+        android:layout_alignEnd="@+id/recordButton" />
 </RelativeLayout>

@@ -15,7 +15,6 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -48,11 +47,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int MINUPDATETIME = 5;
     private static final int MINUPDATEDISTANCE = 5;
 
-    public static int routeNum = -1;
+    public static int routeNum;
 
     private GoogleMap mMap;
     private LocationManager lm;
     private double lat, lng;
+    private ArrayList<POI> pois;
+
+    private static Button recordButton;
+    private static Button routesButton;
+
+    private static ExternalDB externalDB;
 
     private final LocationListener locListener = new LocationListener() {
         public void onLocationChanged(Location location) {
@@ -94,6 +99,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        recordButton = (Button) findViewById(R.id.recordButton);
+        routesButton = (Button) findViewById(R.id.routesButton);
+
+        externalDB = new ExternalDB(this);
+        externalDB.execute("poi");
+
+        routeNum = -1;
     }
 
     /**
@@ -115,18 +128,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
-        ArrayList<POI> pois = Singleton.getInstance().getPois();
-
-        for(POI p : pois) {
-            mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
-        }
-
-        if (routeNum == -1) { // In recording mode
+        if (routeNum == -1) { // In general view
             if (!isLocationEnabled()) showAlert();
+            drawMap();
         } else { // Showing a specific recorded route
             ((Button) findViewById(R.id.recordButton)).setVisibility(View.INVISIBLE);
 
-            drawMapWithRoute();
+            drawRouteOnMap();
+        }
+    }
+
+    /**
+     * Used to draw the map with POIs and CEF Trails. User's routes may optionally be drawn on afterward
+     * with drawRouteOnMap().
+     */
+    public void drawMap() {
+        pois = Singleton.getInstance().getPois();
+
+        System.out.println("Number of POIs: " + pois.size());
+
+        for(POI p : pois) {
+            mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
         }
 
         try {
@@ -139,6 +161,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Draws a user's route on the map. POIs and CEF Trails will still be shown.
+     */
+    public void drawRouteOnMap() {
+        ArrayList<LatLng> coords = readCsv();
+
+        PolylineOptions line = new PolylineOptions().width(10).color(Color.RED);
+        line.addAll(coords);
+
+        mMap.addPolyline(line);
+        if (coords.size() > 0) mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ZOOMLEVEL));
     }
 
     /* Code taken from http://www.androidauthority.com/get-use-location-data-android-app-625012/
@@ -228,25 +263,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void startRecording() {
+        routesButton.setVisibility(View.INVISIBLE);
         RouteData.getInstance().startRecording();
         startUpdates();
     }
 
     public void stopRecording() {
+        routesButton.setVisibility(View.VISIBLE);
         RouteData.getInstance().stopRecording(getApplicationContext());
         stopUpdates();
     }
 
     public void buttonPress(View view) {
-        Button button = (Button) findViewById(R.id.recordButton);
-
-        if (button.getText() == "STOP RECORDING") {
+        if (recordButton.getText() == "STOP RECORDING") {
             stopRecording();
-            button.setText("START RECORDING");
+            recordButton.setText("RECORD NEW ROUTE");
         }
         else {
             startRecording();
-            button.setText("STOP RECORDING");
+            recordButton.setText("STOP RECORDING");
         }
     }
 
@@ -276,13 +311,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return coords;
     }
 
-    public void drawMapWithRoute() {
-        ArrayList<LatLng> coords = readCsv();
-
-        PolylineOptions line = new PolylineOptions().width(10).color(Color.RED);
-        line.addAll(coords);
-
-        mMap.addPolyline(line);
-        if (coords.size() > 0) mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ZOOMLEVEL));
+    public void goToRoutes(View view) {
+        startActivity(new Intent(this, RoutesActivity.class));
     }
 }

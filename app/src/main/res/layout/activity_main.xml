@@ -7,37 +7,20 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.matthew.ceftrails.MainActivity">
+    tools:context="com.matthew.ceftrails.MainActivity"
+    android:background="#ea6a20">
 
-    <Button
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MAPS"
-        android:id="@+id/mapsButton"
-        android:layout_marginTop="118dp"
-        android:textSize="32dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="goToMap" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SAVED ROUTES"
-        android:id="@+id/routesButton"
-        android:textSize="32dp"
-        android:onClick="goToRoutes"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="CLEMSON EXPERIMENTAL FOREST TRAILS"
+        android:id="@+id/textView"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CAMERA"
-        android:id="@+id/cameraButton"
-        android:layout_below="@+id/routesButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="31dp"
-        android:onClick="goToCamera" />
-
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:textIsSelectable="false"
+        android:gravity="center"
+        android:textSize="48dp" />
 </RelativeLayout>

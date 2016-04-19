@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 
@@ -22,9 +20,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ExternalDB externalDB = new ExternalDB(this);
-        externalDB.execute("poi");
     }
 
     public void goToMap(View view) {
