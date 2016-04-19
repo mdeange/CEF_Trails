@@ -58,8 +58,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static Button recordButton;
     private static Button routesButton;
 
-    private static ExternalDB externalDB;
-
     private final LocationListener locListener = new LocationListener() {
         public void onLocationChanged(Location location) {
             lng = location.getLongitude();
@@ -90,8 +88,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        externalDB = new ExternalDB(this);
-        externalDB.execute("poi");
 
         // get the LocationManager
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
