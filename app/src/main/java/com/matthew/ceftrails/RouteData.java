@@ -53,7 +53,6 @@ public class RouteData {
                 String str = "LATITUDE, LONGITUDE, DATETIME";
 
                 for (int i = 0; i < coords.size(); i++) {
-                    System.out.println("Writing: " + coords.get(i).latLng.latitude + ", " + coords.get(i).latLng.longitude);
                     str = str.concat(coords.get(i).latLng.latitude + ", " + coords.get(i).latLng.longitude + ", " + coords.get(i).time + "\n");
                 }
 

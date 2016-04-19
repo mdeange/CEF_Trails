@@ -34,7 +34,6 @@ public class InternalDB {
      * Adds a route to the database
      */
     public void addRoute (int r_id, String name) {
-        System.out.println("Adding route: " + r_id + " with name: " + name);
         try {
             Cursor c;
 

@@ -157,8 +157,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void drawMap() {
         pois = Singleton.getInstance().getPois();
 
-        System.out.println("Number of POIs: " + pois.size());
-
         for(POI p : pois) {
             mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
         }
@@ -317,8 +315,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 List<String> lineList = Arrays.asList(line.split(","));
                 coords.add(new LatLng(Double.parseDouble(lineList.get(0)), Double.parseDouble(lineList.get(1))));
             }
-
-            System.out.println("Number of coordinates: " + coords.size());
 
             inputStream.close();
         } catch (Exception e) {
