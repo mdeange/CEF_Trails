@@ -275,7 +275,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void stopRecording() {
         routesButton.setVisibility(View.VISIBLE);
-        RouteData.getInstance().stopRecording(getApplicationContext());
+        RouteData.getInstance().stopRecording(this);
         stopUpdates();
     }
 
