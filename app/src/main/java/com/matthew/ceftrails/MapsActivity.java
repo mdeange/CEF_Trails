@@ -337,10 +337,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Bitmap bp = (Bitmap)data.getExtras().get("data");
-        ExternalDB externalDB = new ExternalDB(this);
-        if(bp!=null) {
-            Toast.makeText( this,"Item Reported", Toast.LENGTH_SHORT).show();
+        if(data != null) {
+            Bitmap bp = (Bitmap) data.getExtras().get("data");
+            ExternalDB externalDB = new ExternalDB(this);
+            Toast.makeText(this, "Item Reported", Toast.LENGTH_SHORT).show();
             externalDB.execute("upload_image", getBase64String(bp));
         }
     }
