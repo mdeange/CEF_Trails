@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -63,6 +64,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<POI> pois;
     private PolylineOptions polyOptions;
     private Polyline polyline;
+    Criteria criteria;
 
     private static Button recordButton;
     private static Button routesButton;
@@ -104,6 +106,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // get the LocationManager
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        criteria = new Criteria();
 
 
         super.onCreate(savedInstanceState);
@@ -116,8 +119,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         recordButton = (Button) findViewById(R.id.recordButton);
         routesButton = (Button) findViewById(R.id.routesButton);
-
-        //routeNum = -1;
     }
 
     /**
@@ -156,7 +157,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void drawMap() {
         pois = Singleton.getInstance().getPois();
 
-        for(POI p : pois) {
+        for (POI p : pois) {
             mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
         }
 
@@ -186,7 +187,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         line.addAll(coords);
 
         mMap.addPolyline(line);
-        if (coords.size() > 0) mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ROUTEZOOM));
+        if (coords.size() > 0)
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ROUTEZOOM));
     }
 
     /* Code taken from http://www.androidauthority.com/get-use-location-data-android-app-625012/
@@ -198,20 +200,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void showAlert() {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Enable Location")
-            .setMessage("Your GPS Locations Settings is set to 'Off'.\nPlease Enable Location to " +
-                    "use this app")
-            .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(myIntent);
-                }
-            })
-            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                }
-            });
+                .setMessage("Your GPS Locations Settings is set to 'Off'.\nPlease Enable Location to " +
+                        "use this app")
+                .setPositiveButton("Location Settings", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(myIntent);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    }
+                });
         dialog.show();
     }
 
@@ -295,8 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void buttonPress(View view) {
         if (recordButton.getText() == "STOP RECORDING") {
             stopRecording();
-        }
-        else {
+        } else {
             startRecording();
         }
     }
@@ -337,11 +338,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(data != null) {
+        if (data != null) {
             Bitmap bp = (Bitmap) data.getExtras().get("data");
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            Location location = lm.getLastKnownLocation(lm.getBestProvider(criteria, false));
             ExternalDB externalDB = new ExternalDB(this);
             Toast.makeText(this, "Item Reported", Toast.LENGTH_SHORT).show();
-            externalDB.execute("upload_image", getBase64String(bp));
+            externalDB.execute("upload_image", getBase64String(bp), ""+location.getLatitude(), ""+location.getLongitude());
         }
     }
 

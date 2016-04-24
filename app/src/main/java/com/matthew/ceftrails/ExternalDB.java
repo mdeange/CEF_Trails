@@ -63,6 +63,8 @@ public class ExternalDB extends AsyncTask<String, Void, String> {
 
         if(method.equals("upload_image")) {
             String bm = params[1];
+            String lat = params[2];
+            String lng = params[3];
             try {
                 URL url = new URL(url_upload_image);
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();
@@ -70,7 +72,9 @@ public class ExternalDB extends AsyncTask<String, Void, String> {
                 con.setDoOutput(true);
                 OutputStream OS = con.getOutputStream();
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(OS, "UTF-8"));
-                String data = URLEncoder.encode("image", "UTF-8")+"="+URLEncoder.encode(bm, "UTF-8");
+                String data = URLEncoder.encode("image", "UTF-8")+"="+URLEncoder.encode(bm, "UTF-8") + "&" +
+                        URLEncoder.encode("lat", "UTF-8")+"="+URLEncoder.encode(lat, "UTF-8") + "&" +
+                        URLEncoder.encode("lng", "UTF-8")+"="+URLEncoder.encode(lng, "UTF-8");
                 bufferedWriter.write(data);
                 bufferedWriter.close();
                 OS.close();
