@@ -18,8 +18,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -102,6 +104,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // get the LocationManager
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
 
         super.onCreate(savedInstanceState);
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -328,6 +331,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void goToCamera(View view) {
         startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
+
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -335,7 +339,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Bitmap bp = (Bitmap)data.getExtras().get("data");
         ExternalDB externalDB = new ExternalDB(this);
-        externalDB.execute("upload_image", getBase64String(bp));
+        if(bp!=null) {
+            Toast.makeText( this,"Item Reported", Toast.LENGTH_SHORT).show();
+            externalDB.execute("upload_image", getBase64String(bp));
+        }
     }
 
     public static String getBase64String(Bitmap bp) {
