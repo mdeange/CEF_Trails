@@ -332,7 +332,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void goToCamera(View view) {
         startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
