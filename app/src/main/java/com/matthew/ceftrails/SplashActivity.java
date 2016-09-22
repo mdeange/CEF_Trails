@@ -13,6 +13,16 @@ public class SplashActivity extends AppCompatActivity {
         ExternalDB externalDB = new ExternalDB(this);
         externalDB.execute("poi");
 
+
+
+
+        Thread mainw = new Thread();
+        try {
+            mainw.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
         finish();

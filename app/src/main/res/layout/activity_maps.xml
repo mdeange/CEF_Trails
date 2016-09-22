@@ -20,11 +20,12 @@ tools:context="com.matthew.ceftrails.MapsActivity">
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RECORD NEW ROUTE"
+        android:text="RECORD ROUTE"
         android:id="@+id/recordButton"
+        android:onClick="buttonPress"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="buttonPress" />
+        android:layout_toLeftOf="@+id/button"
+        android:layout_toStartOf="@+id/button" />
 
     <Button
         android:layout_width="wrap_content"
@@ -32,17 +33,39 @@ tools:context="com.matthew.ceftrails.MapsActivity">
         android:text="MY SAVED ROUTES"
         android:id="@+id/routesButton"
         android:onClick="goToRoutes"
-        android:layout_alignTop="@+id/map"
-        android:layout_alignRight="@+id/recordButton"
-        android:layout_alignEnd="@+id/recordButton" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="CAMERA"
-        android:id="@+id/cameraButton"
+        android:text="Report Hazard"
+        android:id="@+id/button"
+        android:onClick="reporthazard"
+        android:layout_alignBottom="@+id/map"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Terrain"
+        android:id="@+id/terrainButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/button"
+        android:layout_alignEnd="@+id/button"
+        android:nestedScrollingEnabled="false"
+        android:onClick="setTerrain" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info"
+        android:id="@+id/button4"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/routesButton"
-        android:layout_toEndOf="@+id/routesButton"
-        android:onClick="goToCamera" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="goToInfo" />
 </RelativeLayout>
