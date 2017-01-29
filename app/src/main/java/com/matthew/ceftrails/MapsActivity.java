@@ -31,7 +31,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -53,21 +55,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int ROUTEZOOM = 19;
     private static final int MAPZOOM = 13;
     private static final int MSPERSEC = 1000;
-    private static final int MINUPDATETIME = 5;
-    private static final int MINUPDATEDISTANCE = 5;
+    private static final int MINUPDATETIME = 1;
+    private static final int MINUPDATEDISTANCE = 1;
 
     public static int routeNum = -1;
 
+    private ExternalDB externalDB;
     private GoogleMap mMap;
     private LocationManager lm;
     private double lat, lng;
     private ArrayList<POI> pois;
+    private ArrayList<POI> hazards;
     private PolylineOptions polyOptions;
     private Polyline polyline;
     Criteria criteria;
 
     private static Button recordButton;
     private static Button routesButton;
+    private static boolean terrain = false;
 
     private final LocationListener locListener = new LocationListener() {
         public void onLocationChanged(Location location) {
@@ -107,6 +112,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // get the LocationManager
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         criteria = new Criteria();
+        try{
+        externalDB = new ExternalDB(this);
+            Log.i("executed","Poi_url");
+        externalDB.execute("poi_url");
+        }
+        catch(Exception e){
+            Log.i("Could not execute","Poi_url");
+        }
 
 
         super.onCreate(savedInstanceState);
@@ -150,15 +163,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public void setTerrain(View view){
+        try{
+            if(!terrain){
+            mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+            terrain = true;
+                Button btn = (Button) findViewById(R.id.terrainButton);
+                btn.setText("Remove Terrain");
+            }
+            else{
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                terrain = false;
+                Button btn = (Button) findViewById(R.id.terrainButton);
+                btn.setText("Set Terrain");
+            }
+        }
+        catch(Exception e){
+            Log.i("Exception:", "Caught");
+        }
+    }
+
     /**
      * Used to draw the map with POIs and CEF Trails. User's routes may optionally be drawn on afterward
      * with drawRouteOnMap().
      */
     public void drawMap() {
         pois = Singleton.getInstance().getPois();
+        hazards = Singleton.getInstance().getHazards();
 
         for (POI p : pois) {
-            mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()));
+            MarkerOptions temp = new MarkerOptions().position(p.getCoord()).title(p.getName());
+            //mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).snippet("Population: 4,137,400")).showInfoWindow();
+            mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)).snippet(p.getDescription())).showInfoWindow();
+           // mMap.addMarker(new MarkerOptions().position(p.getCoord()).title(p.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.star_marker)));
+
+        }
+        for (POI x : hazards) {
+            //mMap.addMarker(new MarkerOptions().position(x.getCoord()).title(x.getName()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.addMarker(new MarkerOptions().position(x.getCoord()).title(x.getName()).icon(BitmapDescriptorFactory.fromResource(R.drawable.warning)).snippet(x.getDescription())).showInfoWindow();
+
         }
 
         try {
@@ -167,6 +210,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             KmlLayer northLayer = new KmlLayer(mMap, R.raw.north, getApplication());
             northLayer.addLayerToMap();
+
+           KmlLayer forestRoads = new KmlLayer(mMap, R.raw.forest_roads, getApplication());
+           forestRoads.addLayerToMap();
+
+
+            KmlLayer newpoly = new KmlLayer(mMap, R.raw.poly_red, getApplication());
+            newpoly.addLayerToMap();
+
+
+
+
+
+
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -186,7 +242,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         PolylineOptions line = new PolylineOptions().width(10).color(Color.RED);
         line.addAll(coords);
 
+
+
+        Log.i("Start coord ", "" + coords.get(0));
+        Log.i("End coord ", "" + coords.get(coords.size() - 1));
+
         mMap.addPolyline(line);
+        mMap.addMarker(new MarkerOptions().position(coords.get(0)).icon(BitmapDescriptorFactory.fromResource(R.drawable.start_icon)));
+        mMap.addMarker(new MarkerOptions().position(coords.get(coords.size() - 1)).icon(BitmapDescriptorFactory.defaultMarker()));
         if (coords.size() > 0)
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords.get(0), ROUTEZOOM));
     }
@@ -286,6 +349,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void stopRecording() {
+        if(polyline!=null)
         polyline.remove();
         routesButton.setVisibility(View.VISIBLE);
         RouteData.getInstance().stopRecording(this);
@@ -326,13 +390,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return coords;
     }
 
+    public void reporthazard(View view) {
+        Intent i = new Intent(this, ReportHazard.class);
+        try
+        {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            Location location = lm.getLastKnownLocation(lm.getBestProvider(criteria, false));
+            i.putExtra("lat",""+location.getLatitude());
+            i.putExtra("longi",""+ location.getLongitude());
+
+            startActivity(i);
+        }
+        catch (NullPointerException e)
+        {
+            Log.i("Exception",e.toString());
+            Toast.makeText(this, "Enable Location Services", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     public void goToRoutes(View view) {
         startActivity(new Intent(this, RoutesActivity.class));
     }
 
+    public void goToInfo(View view) {
+        startActivity(new Intent(this, InfoActivity.class));
+    }
+
     public void goToCamera(View view) {
         startActivityForResult(new Intent(MediaStore.ACTION_IMAGE_CAPTURE), 0);
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

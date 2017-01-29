@@ -35,7 +35,7 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -44,20 +44,32 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".RoutesActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".RoutesActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UserRegisterActivity"
-            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".UserRegisterActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReportHazard"
+            android:parentActivityName=".MapsActivity" />
+        <activity
+            android:name=".InfoActivity"
+            android:parentActivityName=".MapsActivity" />
+        <activity
+            android:name=".BrowsePoi"
+            android:parentActivityName=".InfoActivity" />
+        <activity android:name=".WebActivity"></activity>
     </application>
 
 </manifest>
